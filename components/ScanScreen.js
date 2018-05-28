@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+const RNFS = require('react-native-fs');
 
 import {
   AppRegistry,
@@ -8,53 +9,73 @@ import {
 } from 'react-native';
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
+const healthRecordPath = RNFS.DocumentDirectoryPath + '/healthrecord.medid';
+const keyPath = RNFS.DocumentDirectoryPath + '/key.medid';
 
 export default class ScanScreen extends Component {  
   onSuccess(e) {
     console.log("DATA IS: " + e.data)
     this.authorizeHR(e.data)
-}
+  }
+
+  readfromDisk = (path) => {
+    RNFS.readFile(path, 'utf8')
+    .then(result => {
+        console.log("readFromDisk(" + path + "): got string: " + result)
+        return result
+      })
+      .catch((err) => {
+        console.log("ERROR reading from " + path + ": " + err.message);
+        return ""
+      });
+  }
 
   authorizeHR = (authorizeEndpoint) => {
     const { navigate } = this.props.navigation;
-    // read HR from disk
 
-    // generate key (or read from disk)
+    RNFS.readFile(healthRecordPath, 'utf8')
+    .then(healthRecord => {
+        console.log("healthRecord read from disk: "+ healthRecord)
+        RNFS.readFile(keyPath, 'utf8')
+        .then(key => {
+          console.log("key read from disk: "+ key)
 
-    // encrypt HR with key
+            // encrypt HR with key
+            // encrypt key with doctor's public key (from the url)
 
-    // encrypt key with doctor's public key (from the url)
+            // send encryptedHR + encryptedKey to the url
+            const payload = {
+                "patient_id": "patientMobile",
+                "healthrecord": healthRecord,
+                "key": key
+            }
 
-    // send encryptedHR + encryptedKey to the url
-    const payload = {
-        "patient_id": "patientMobile",
-        "healthrecord": "{patient-name: 'mobile', 'dob': '02-02-1990', 'blah': 'blah-blah'}",
-        "key": "key-from-mobile"
-    }
-
-    fetch(authorizeEndpoint, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-        }).then((response) =>  {
-            console.log(response)
-            navigate('Home')
-            Alert.alert(
-                'Success!',
-                'The doctor has been authorized to access your healthrecords.'
-              )
+            fetch(authorizeEndpoint, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+                }).then((response) =>  {
+                    console.log(response)
+                    navigate('Home')
+                    Alert.alert(
+                        'Success!',
+                        'The doctor has been authorized to access your healthrecords.'
+                      )
+                });
         })
-          .catch((error) => { 
-            console.error(error)
-            navigate('Home')
-            Alert.alert(
-                'Error',
-                'Something went wrong on our end. Please try again.'
-              )
-        });
+      })
+      .catch((err) => {
+        console.log(err.message);
+        navigate('Home')
+        Alert.alert(
+            'Error',
+            'Something went wrong on our end. Please try again.'
+          )
+      });
+
   }
 
   render() {

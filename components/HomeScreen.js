@@ -2,9 +2,16 @@ import React, { Component } from 'react';
 import {
     Button,
   } from 'react-native';
+import {seedHealthRecord, seedKey} from '../js/seed.js'
 
 export default class HomeScreen extends React.Component {
-    // TODO: some way to fetch the updated HR.. (ideally we scan QR code again, if not just hardcode the url and fetch when we press btn.)
+    constructor() {
+      super()
+      seedHealthRecord()
+      seedKey()
+      // fetch from URL -> if success, replace HR on disk.
+    }
+
     static navigationOptions = {
       title: 'Welcome',
     };
