@@ -3,7 +3,7 @@ const RNFS = require('react-native-fs');
 const healthRecordPath = RNFS.DocumentDirectoryPath + '/healthrecord.medid';
 const keyPath = RNFS.DocumentDirectoryPath + '/key.medid';
 import PATIENT_HR_SEED from './patienthrseed';
-const PATIENT_KEY_SEED = "10D9920D8D9413573ADCAF27CDFB9B95"
+const PATIENT_KEY_SEED = "10D9920D8D941"
 
 seedHealthRecord = () => {
   RNFS.exists(healthRecordPath)

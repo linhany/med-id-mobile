@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 const RNFS = require('react-native-fs');
+import {encryptStringWithPublicKey, encryptStringWithSymmetricKey} from '../js/crypto'
 
 import {
   AppRegistry,
@@ -18,18 +19,6 @@ export default class ScanScreen extends Component {
     this.authorizeHR(e.data)
   }
 
-  readfromDisk = (path) => {
-    RNFS.readFile(path, 'utf8')
-    .then(result => {
-        console.log("readFromDisk(" + path + "): got string: " + result)
-        return result
-      })
-      .catch((err) => {
-        console.log("ERROR reading from " + path + ": " + err.message);
-        return ""
-      });
-  }
-
   authorizeHR = (authorizeEndpoint) => {
     const { navigate } = this.props.navigation;
 
@@ -41,7 +30,17 @@ export default class ScanScreen extends Component {
           console.log("key read from disk: "+ key)
 
             // encrypt HR with key
+            healthRecord = encryptStringWithSymmetricKey(healthRecord, key)
+            console.log("encrypted healthrecord: " + healthRecord);
+
+            // ===========  TODO: See how to encrypt here and decrypt on server ============
             // encrypt key with doctor's public key (from the url)
+            arr = authorizeEndpoint.split("/")
+            const publicKey = arr[arr.length - 2]
+            console.log("public key used: " + publicKey)
+            Ekey = encryptStringWithPublicKey(key, publicKey)
+            console.log("encrypted key: " + Ekey)
+            // =============================================================================
 
             // send encryptedHR + encryptedKey to the url
             const payload = {
@@ -64,6 +63,13 @@ export default class ScanScreen extends Component {
                         'Success!',
                         'The doctor has been authorized to access your healthrecords.'
                       )
+                }).catch((err) => {
+                  console.log(err.message);
+                  navigate('Home')
+                  Alert.alert(
+                      'Error',
+                      'Something went wrong on our end. Please try again.'
+                    )
                 });
         })
       })
