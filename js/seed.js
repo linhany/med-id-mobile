@@ -8,10 +8,10 @@ const PATIENT_KEY_SEED = "10D9920D8D941"
 seedHealthRecord = () => {
   RNFS.exists(healthRecordPath)
   .then(exists => {
-    if (exists) {
-      console.log("Healthrecord already exists, not seeding");
-      return
-    }
+    // if (exists) {
+    //   console.log("Healthrecord already exists, not seeding");
+    //   return
+    // }
     // write the file
     RNFS.writeFile(healthRecordPath, PATIENT_HR_SEED, 'utf8')
     .then((success) => {

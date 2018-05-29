@@ -44,7 +44,7 @@ export default class ScanScreen extends Component {
 
             // send encryptedHR + encryptedKey to the url
             const payload = {
-                "patient_id": "patientMobile",
+                "patient_id": "cecilia_rosewood",
                 "healthrecord": healthRecord,
                 "key": key
             }

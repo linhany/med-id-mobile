@@ -18,7 +18,7 @@ export default class HomeScreen extends React.Component {
     allowHealthRecordsUpdate = () => {
       // ideally we scan qr code again, but for now..
       console.log("allowHealthRecordsUpdate()")
-      showHealthRecordsEndpoint="https://med-id-server.herokuapp.com/healthrecord/patientMobile"
+      showHealthRecordsEndpoint="https://med-id-server.herokuapp.com/healthrecord/cecilia_rosewood"
       fetch(showHealthRecordsEndpoint)
       .then(response => response.json())
       .then(data => {
