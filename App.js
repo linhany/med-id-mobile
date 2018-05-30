@@ -79,7 +79,7 @@ export default class App extends Component {
 
   render() {
     let healthRecordData = this.state.healthRecord.map((item, index) => {
-      return {visitType: item.visitType, referee: item.referee, key: "" + index}
+      return {visitType: item.visitType, referee: item.referee, date: item.dateTime.split(",")[0] , key: "" + index}
     })
 
     return (
@@ -103,7 +103,7 @@ export default class App extends Component {
                 tertiaryText: item.referee,
               }}
               rightElement={
-                <Button disabled text="05/12/2018" />
+                <Button disabled text={item.date} />
               }
             />}
           />

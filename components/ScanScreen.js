@@ -152,5 +152,3 @@ const styles = StyleSheet.create({
     color: '#000',
   },
 });
-
-AppRegistry.registerComponent('default', () => ScanScreen);
