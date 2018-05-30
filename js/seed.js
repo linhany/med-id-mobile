@@ -5,13 +5,13 @@ const keyPath = RNFS.DocumentDirectoryPath + '/key.medid';
 import PATIENT_HR_SEED from './patienthrseed';
 const PATIENT_KEY_SEED = "10D9920D8D941"
 
-seedHealthRecord = () => {
+seedHealthRecord = (replaceExisting) => {
   RNFS.exists(healthRecordPath)
   .then(exists => {
-    // if (exists) {
-    //   console.log("Healthrecord already exists, not seeding");
-    //   return
-    // }
+    if (!replaceExisting && exists) {
+      console.log("Healthrecord already exists, not seeding");
+      return
+    }
     // write the file
     RNFS.writeFile(healthRecordPath, PATIENT_HR_SEED, 'utf8')
     .then((success) => {
@@ -23,10 +23,10 @@ seedHealthRecord = () => {
   })
 }
 
-seedKey = () => {
+seedKey = (replaceExisting) => {
   RNFS.exists(keyPath)
   .then(exists => {
-    if (exists) {
+    if (!replaceExisting && exists) {
       console.log("Key already exists, not seeding");
       return
     }

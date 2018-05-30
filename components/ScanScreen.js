@@ -6,16 +6,49 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  Alert
+  Alert,
+  StatusBar,
+  View
 } from 'react-native';
+import { COLOR, ThemeProvider, Toolbar } from 'react-native-material-ui';
+import Container from './Container';
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
 const healthRecordPath = RNFS.DocumentDirectoryPath + '/healthrecord.medid';
 const keyPath = RNFS.DocumentDirectoryPath + '/key.medid';
 
+const uiTheme = {
+  palette: {
+      primaryColor: COLOR.green500,
+  },
+  toolbar: {
+      container: {
+          height: 100,
+      },
+  },
+};
+
 export default class ScanScreen extends Component {  
   onSuccess(e) {
     console.log("DATA IS: " + e.data)
+    const appointmentEndpoint = "https://med-id-server.herokuapp.com/doctor/1/appointment"
+      fetch(appointmentEndpoint, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: "",
+        }).then((response) =>  {
+          console.log(response)
+        }).catch((err) => {
+          console.log(err.message);
+          Alert.alert(
+              'Error',
+              'Something went wrong with making an appointment. Please try again.'
+            )
+        });
+
     this.authorizeHR(e.data)
   }
 
@@ -83,17 +116,26 @@ export default class ScanScreen extends Component {
       });
 
   }
-
+  static navigationOptions = {
+    title: 'Menu',
+  };
   render() {
     return (
-      <QRCodeScanner
-        onRead={this.onSuccess.bind(this)}
-        topContent={
-          <Text style={styles.centerText}>
-            Scan the QR code to <Text style={styles.textBold}>grant access</Text> to your health records.
-          </Text>
-        }
-      />
+      <ThemeProvider uiTheme={uiTheme}>
+        <Container>
+          <StatusBar backgroundColor="rgba(0, 0, 0, 0.2)" translucent />
+          <Toolbar
+            leftElement="close"
+            onLeftElementPress={() => this.props.navigation.navigate('Home')}
+            centerElement="Check-in"
+          />
+          <View>
+          <QRCodeScanner
+            onRead={this.onSuccess.bind(this)}
+          />
+        </View>
+        </Container>
+      </ThemeProvider>
     );
   }
 }
@@ -108,13 +150,6 @@ const styles = StyleSheet.create({
   textBold: {
     fontWeight: '500',
     color: '#000',
-  },
-  buttonText: {
-    fontSize: 21,
-    color: 'rgb(0,122,255)',
-  },
-  buttonTouchable: {
-    padding: 16,
   },
 });
 

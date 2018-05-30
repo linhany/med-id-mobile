@@ -1,8 +1,10 @@
 import { AppRegistry } from 'react-native';
-import App from './App';
+import Root from './Root';
 import { YellowBox } from 'react-native';
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader']);
 YellowBox.ignoreWarnings(['Class RCTCxxModule']);
+YellowBox.ignoreWarnings(['Module RNRandomBytes']);
+YellowBox.ignoreWarnings(['Module RNOS']);
 
 
-AppRegistry.registerComponent('MedIdMobile', () => App);
+AppRegistry.registerComponent('MedIdMobile', () => Root);
